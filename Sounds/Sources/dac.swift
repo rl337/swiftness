@@ -35,7 +35,7 @@ class AVFoundationDAC {
         try self.audioEngine.start()
     }
 
-    func play(sample: AudioSampled, duration: Double) {
+    func play(sample: Sampled, duration: Double) {
         let totalSamples = Int(Double(self.audioFormat.sampleRate) * duration)
         let buffer = AVAudioPCMBuffer(pcmFormat: audioPlayer.outputFormat(forBus:0), frameCapacity: AVAudioFrameCount(totalSamples))
         buffer.frameLength = UInt32(totalSamples)

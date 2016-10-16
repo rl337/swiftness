@@ -16,53 +16,27 @@ limitations under the License.
 
 import Darwin
 
-protocol AudioSampled {
-    var sampleRate: Double { get }
-
-    func value(atSample sample: Double) -> Double
-} 
-
-class Sampled: AudioSampled {
-    var sampleRate: Double
-
-    init(sampleRate rate: Double) {
-        self.sampleRate = rate
+class Instrument<W: Waveform> {
+    var waveforms: [W?]
+    var dac: AVFoundationDAC
+    
+    init(dac: AVFoundationDAC, samplerate: Double) {
+        self.waveforms = Array<W?>(repeating: nil, count: SoundsMath.notesOnKeyboard)
+        for key in 1 ... SoundsMath.notesOnKeyboard {
+            let frequency = SoundsMath.noteToFrequency(forNote: key)
+            self.waveforms[key-1] = W(sampleRate: samplerate, frequency: frequency, amplitude: 0.8);
+        }
+        self.dac = dac
     }
-
-    func value(atSample sample: Double) -> Double {
-        preconditionFailure("This method must be overridden")
+    
+    func play(note: Int, duration: Double) {
+        if note < 1 || note >= SoundsMath.notesOnKeyboard {
+            return
+        }
+        
+        if let waveform = self.waveforms[note-1] {
+            dac.play(sample: waveform, duration: duration)
+        }
     }
-
-}
-
-class RadiansSampled: Sampled {
-
-    override func value(atSample sample: Double) -> Double {
-        // Convert sample parameter into time (seconds)
-        let timeDomain = sample.truncatingRemainder(dividingBy: sampleRate) / sampleRate
-
-        // Convert time into radians
-        let functionDomain = 2 * Double.pi * timeDomain
-
-        return valueAtRadian(atRadian: functionDomain)
-    }
-
-    func valueAtRadian(atRadian radian: Double) -> Double {
-        preconditionFailure("This method must be overridden")
-    }
-
-}
-
-class SineSampled: RadiansSampled {
-    var frequency: Double
-
-    init(sampleRate rate: Double, baseFrequency frequency: Double) {
-        self.frequency = frequency
-        super.init(sampleRate: rate)
-    }
-
-    override func valueAtRadian(atRadian radian: Double) -> Double {
-        return sin(self.frequency * radian)
-    }
-
+    
 }

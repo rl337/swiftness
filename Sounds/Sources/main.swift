@@ -17,19 +17,15 @@ limitations under the License.
 import Darwin
 import AVFoundation
 
-let sampleRate = 44100
-let seconds = 5
-
-// freq in hz
-let freq = 440.0  // A440
-
-let totalSamples = sampleRate * seconds
-
 let dac = AVFoundationDAC()
+
+let instrument = Instrument<SawtoothSampled>(dac: dac, samplerate: SoundsMath.sampleRateCDQuality)
 
 do {
     try dac.start()
-    dac.play(sample: SineSampled(sampleRate: Double(sampleRate), baseFrequency: freq), duration: 1.0)
+    for (_, note) in [ 52, 50, 48, 47, 45, 43, 41, 40 ].enumerated() {
+        instrument.play(note: note, duration: 1.0)
+    }
     dac.stop()
 } catch {
 
