@@ -28,6 +28,7 @@ class SoundsMath {
     static let hzA440 = 440.0
     static let sampleRateCDQuality = 44100.0
 
+    static let doubleDeltaEpsilon = 1.0e-100
     
     static func noteToFrequency(forNote note: Int) -> Double {
         assert(note > 0 && note <= notesOnKeyboard, "Note \(note) must fall between the range of 1 and \(notesOnKeyboard) inclusive")
@@ -36,6 +37,23 @@ class SoundsMath {
         return pow(2.0, exponent) * hzA440
     }
     
+    static func round(value: Double, toDecimalPlace digits: Int) -> Double {
+        let scaling = value * pow(10.0, Double(digits))
+        let scaled = value * scaling
+        let rounded = Foundation.round(scaled)
+        return rounded / scaling
+    }
     
+    static func areDoublesEqual(_ a: Double, _ b: Double, epsilon: Double) -> Bool {
+        let delta = abs(a - b)
+        if delta > epsilon {
+            return false
+        }
+        return true
+    }
+    
+    static func areDoublesEqual(_ a: Double, _ b: Double) -> Bool {
+        return areDoublesEqual(a, b, epsilon: doubleDeltaEpsilon)
+    }
     
 }
