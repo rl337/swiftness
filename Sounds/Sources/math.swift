@@ -27,16 +27,7 @@ class SoundsMath {
     static let notesOnKeyboard = 88
     static let hzA440 = 440.0
     static let sampleRateCDQuality = 44100.0
-    
-    /**
-         This method calculates the remainder of dividend divided by divisor.  Unlike
-         *Double.remainder* this guarantees that the quotient used produces the smallest
-         positive remainder.
-     */
-    static func remainder(value dividend: Double, dividedBy divisor: Double) -> Double {
-        let quotent =  dividend / divisor
-        return dividend - divisor * quotent
-    }
+
     
     static func noteToFrequency(forNote note: Int) -> Double {
         assert(note > 0 && note <= notesOnKeyboard, "Note \(note) must fall between the range of 1 and \(notesOnKeyboard) inclusive")
@@ -44,5 +35,7 @@ class SoundsMath {
         let exponent = position / 12.0
         return pow(2.0, exponent) * hzA440
     }
+    
+    
     
 }
